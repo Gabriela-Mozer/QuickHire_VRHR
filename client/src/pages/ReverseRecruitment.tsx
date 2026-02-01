@@ -30,7 +30,17 @@ export function ReverseRecruitment() {
   const [messages, setMessages] = useState<Message[]>([
     {
       type: 'ai',
-      content: 'Teraz Twoja kolej! 🎯 O co chcesz zapytać firmę? Możesz pytać o zespół, workflow, narzędzia, kulturę lub cokolwiek innego, co Cię interesuje.',
+      content: 'Okej, teraz Twoja kolej! 🎯',
+      timestamp: new Date()
+    },
+    {
+      type: 'ai',
+      content: 'Śmiało pytaj o wszystko, co Cię interesuje - zespół, projekty, jak wygląda typowy dzień, narzędzia, kulturę, możliwości rozwoju... Bez stresu, tu nie ma głupich pytań! 😊',
+      timestamp: new Date()
+    },
+    {
+      type: 'ai',
+      content: 'Możesz też skorzystać z podpowiedzi poniżej lub zadać swoje własne pytanie. Co Cię ciekawi?',
       timestamp: new Date()
     }
   ]);

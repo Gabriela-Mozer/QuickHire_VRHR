@@ -12,6 +12,7 @@ interface MatchData {
   strengths: string[];
   gaps: string[];
   summary: string;
+  cvHighlights?: string[];
 }
 
 export function MatchAnalysis() {
@@ -48,9 +49,9 @@ export function MatchAnalysis() {
   };
 
   const getMatchLabel = (percentage: number) => {
-    if (percentage >= 80) return 'Bardzo dobre dopasowanie';
-    if (percentage >= 50) return 'Dobre dopasowanie';
-    return 'Słabe dopasowanie';
+    if (percentage >= 80) return 'Świetne dopasowanie! 🎉';
+    if (percentage >= 50) return 'Dobre dopasowanie! 👍';
+    return 'Są pewne braki, ale możemy o tym pogadać 💪';
   };
 
   const getProgressColor = (percentage: number) => {
@@ -131,6 +132,33 @@ export function MatchAnalysis() {
           </div>
         </CardContent>
       </Card>
+
+      {/* CV Highlights - Show that CV was read */}
+      {matchData.cvHighlights && matchData.cvHighlights.length > 0 && (
+        <Card className="backdrop-blur-sm bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border-blue-200/50 dark:border-blue-800/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-blue-600" />
+              Co zauważyliśmy w Twoim CV
+            </CardTitle>
+            <CardDescription>
+              Przeanalizowaliśmy Twoje doświadczenie i umiejętności
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {matchData.cvHighlights.map((highlight, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-2 rounded-lg bg-white/60 dark:bg-slate-900/60"
+                >
+                  <span className="text-sm text-foreground">{highlight}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Strengths and Gaps */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

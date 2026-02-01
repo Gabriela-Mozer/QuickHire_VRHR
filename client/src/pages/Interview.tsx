@@ -53,7 +53,17 @@ export function Interview() {
         setMessages([
           {
             type: 'ai',
-            content: 'Cześć! Jestem Rocket Virtual Recruiter. Przeprowadzę z Tobą rozmowę rekrutacyjną. Przygotowałem dla Ciebie kilka pytań na podstawie Twojego CV i wymagań stanowiska. Zacznijmy!',
+            content: 'Cześć! 👋 Miło Cię poznać! Jestem Rocket - Twój wirtualny asystent rekrutacji.',
+            timestamp: new Date()
+          },
+          {
+            type: 'ai',
+            content: 'Zanim zaczniemy, ważna info: przeprowadzam z Tobą całą rozmowę rekrutacyjną (oprócz ostatecznej decyzji o zatrudnieniu - tę podejmuje zespół HR). To znaczy, że możesz być sobą i odpowiadać naturalnie, bez stresu! 😊',
+            timestamp: new Date()
+          },
+          {
+            type: 'ai',
+            content: 'Przeczytałem Twoje CV i dopasowałem pytania specjalnie dla Ciebie. Nie ma tutaj dobrych czy złych odpowiedzi - chcę po prostu lepiej Cię poznać. Gotowy/a? Zaczynamy! 🚀',
             timestamp: new Date()
           },
           {
@@ -127,8 +137,22 @@ export function Interview() {
         // Simulate processing time
         setTimeout(() => {
           const nextQuestion = questions[currentQuestionIndex + 1];
+          const friendlyTransitions = [
+            'Super! Przejdźmy dalej 😊',
+            'Świetnie! Kolejne pytanie:',
+            'Dzięki za odpowiedź! Teraz coś innego:',
+            'Okej, rozumiem! A teraz:',
+            'Ciekawe! Powiedz mi jeszcze:'
+          ];
+          const randomTransition = friendlyTransitions[Math.floor(Math.random() * friendlyTransitions.length)];
+
           setMessages(prev => [
             ...prev.slice(0, -1),
+            {
+              type: 'ai',
+              content: randomTransition,
+              timestamp: new Date()
+            },
             {
               type: 'ai',
               content: nextQuestion.question,
@@ -141,7 +165,11 @@ export function Interview() {
         // All questions answered
         setMessages(prev => [...prev, {
           type: 'ai',
-          content: 'Dziękuję za odpowiedzi! Teraz przejdziemy do sekcji, gdzie Ty możesz zadać pytania firmie.',
+          content: 'Wow, świetnie nam poszło! 🎉 Dzięki za szczere odpowiedzi - to było naprawdę interesujące!',
+          timestamp: new Date()
+        }, {
+          type: 'ai',
+          content: 'Teraz Twoja kolej - możesz pytać mnie o wszystko, co Cię interesuje odnośnie firmy, zespołu czy projektu. Nie krępuj się! 😊',
           timestamp: new Date()
         }]);
 

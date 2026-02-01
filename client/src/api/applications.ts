@@ -3,26 +3,40 @@ import api from './api';
 // Description: Submit a CV for analysis
 // Endpoint: POST /api/applications/analyze-cv
 // Request: { jobId: string, cvText: string, email: string }
-// Response: { applicationId: string, matchPercentage: number, strengths: string[], gaps: string[], summary: string }
+// Response: { applicationId: string, matchPercentage: number, strengths: string[], gaps: string[], summary: string, cvHighlights: string[] }
 export const analyzeCv = (data: { jobId: string; cvText: string; email: string }) => {
-  // Mocking the response
+  // Mocking the response - simulating CV content analysis
+  const cvText = data.cvText.toLowerCase();
+  const hasReact = cvText.includes('react') || cvText.includes('frontend');
+  const hasTypeScript = cvText.includes('typescript') || cvText.includes('ts');
+  const hasNode = cvText.includes('node') || cvText.includes('backend');
+  const hasDatabase = cvText.includes('database') || cvText.includes('sql') || cvText.includes('mongo');
+
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
         applicationId: 'app_' + Math.random().toString(36).substr(2, 9),
         matchPercentage: 82,
         strengths: [
-          'Strong React and TypeScript expertise with 5+ years of experience',
-          'Proven track record of building scalable applications',
-          'Experience with modern development tools and practices',
-          'Excellent problem-solving and communication skills'
+          hasReact ? 'Widzę solidne doświadczenie z React - dokładnie tego szukamy! 💪' : 'Świetne umiejętności programistyczne',
+          hasTypeScript ? 'TypeScript w CV to duży plus - pokazuje, że dbasz o jakość kodu' : 'Dobre podstawy techniczne',
+          hasNode ? 'Full-stack experience z Node.js - idealnie pasuje do naszego zespołu!' : 'Wszechstronne doświadczenie techniczne',
+          'Widać progresję w karierze i chęć rozwoju - to dla nas ważne',
+          'Projekty w CV pokazują umiejętność pracy z nowoczesnymi narzędziami'
         ],
         gaps: [
-          'Limited experience with PostgreSQL (mostly MongoDB)',
-          'No prior experience with AWS services',
-          'Limited DevOps knowledge'
+          !hasDatabase ? 'Przydałaby się znajomość PostgreSQL, ale możemy Cię tego nauczyć' : 'Brak doświadczenia z cloud infrastructure, ale to do opanowania',
+          'Widziałbym więcej projektów zespołowych, ale to wyjaśnimy na rozmowie',
+          'DevOps to nice-to-have, nie must-have 😊'
         ],
-        summary: 'Your profile shows a very good match for this position. You have strong React skills and relevant experience. We recommend proceeding with the interview to discuss your background further.'
+        summary: 'Super! Twoje CV pokazuje, że masz solidne fundamenty i chęć rozwoju. Przeanalizowałem Twoje doświadczenie i projekty - pasują do tego, czego szukamy. Chodźmy pogadać więcej na rozmowie!',
+        cvHighlights: [
+          hasReact ? '✓ Doświadczenie z React zauważone' : '✓ Silne fundamenty programistyczne',
+          hasTypeScript ? '✓ TypeScript na pokładzie' : '✓ Dobre praktyki kodowania',
+          hasNode ? '✓ Full-stack capabilities' : '✓ Wszechstronne umiejętności',
+          '✓ Projekty pokazują praktyczne zastosowanie wiedzy',
+          '✓ Progresja w karierze widoczna'
+        ]
       });
     }, 2000);
   });
@@ -46,17 +60,17 @@ export const getInterviewQuestions = (applicationId: string) => {
         questions: [
           {
             id: 'q1',
-            question: 'Tell us about your most challenging React project and how you overcame the obstacles.',
+            question: 'Opowiedz mi o projekcie, z którego jesteś najbardziej dumny/dumna. Co sprawiło, że był wyjątkowy? Jakie wyzwania pokonałeś/pokonałaś?',
             estimatedTime: 2
           },
           {
             id: 'q2',
-            question: 'How do you approach performance optimization in large-scale React applications?',
+            question: 'Wyobraź sobie, że musisz wytłumaczyć swojej babci, dlaczego Twoja aplikacja działa wolno. Jak podszedłbyś/podeszłabyś do znalezienia i rozwiązania problemu? 😊',
             estimatedTime: 2
           },
           {
             id: 'q3',
-            question: 'Describe your experience with TypeScript and why you prefer it over JavaScript.',
+            question: 'Widzę w Twoim CV doświadczenie z różnymi technologiami. Która z nich najbardziej Cię fascynuje i dlaczego? Może masz jakiś ciekawy projekt, który z nią zrobiłeś/zrobiłaś?',
             estimatedTime: 2
           }
         ]
@@ -102,16 +116,16 @@ export const submitCandidateQuestion = (applicationId: string, data: { question:
   return new Promise((resolve) => {
     setTimeout(() => {
       const answers: { [key: string]: string } = {
-        'Jak wygląda typowy dzień w zespole?': 'Nasz typowy dzień zaczyna się o 9:00 standup\'em, gdzie omawiamy bieżące zadania. Pracujemy w sprintach 2-tygodniowych. Mamy elastyczne godziny pracy, więc możesz pracować kiedy chcesz, o ile jesteś dostępny podczas core hours (10:00-16:00). Popołudnia to zazwyczaj focused work time z okazjonalnymi code review\'ami.',
-        'Jakie narzędzia używacie?': 'Używamy nowoczesnego stack\'u: React, TypeScript, Node.js, PostgreSQL, Docker, Kubernetes. Do komunikacji mamy Slack, do projektów Jira, a do version control Git. Wszystkie narzędzia są open-source lub mają dobre wsparcie.',
-        'Jak wygląda proces onboardingu?': 'Onboarding trwa około 2 tygodni. Pierwszy dzień to zapoznanie się z zespołem i infrastrukturą. Drugi tydzień to małe zadania, aby poznać codebase. Masz dedykowanego mentora, który Ci pomoże. Po 2 tygodniach jesteś gotów do pełnoprawnych zadań.',
-        'Jakie są możliwości rozwoju?': 'Oferujemy budżet na szkolenia i konferencje. Możesz pracować nad własnymi projektami. Mamy program mentoringu. Ścieżka kariery jest jasna - od Junior do Senior, a potem możliwość przejścia na stanowisko Tech Lead lub Architect.',
-        'Jaka jest kultura firmy?': 'Nasza kultura opiera się na transparentności, współpracy i ciągłym uczeniu się. Cenimy work-life balance i elastyczność. Mamy regularne team building\'i i social events. Każdy głos jest ważny, niezależnie od stanowiska.'
+        'Jak wygląda typowy dzień w zespole?': 'Hej! Dzień zaczyna się luźnym standup\'em koło 9:30 (bez presji, jeśli ktoś ma spotkanie). Gadamy 15 minut o tym, co robimy i czy ktoś potrzebuje pomocy. Potem skupiamy się na pracy - mamy tzw. focus time od 10 do 14, gdzie staramy się nie przerywać sobie nawzajem. Po lunchu często łapiemy się na spontaniczne code review lub pair programming. Fajne jest to, że możesz pracować tak, jak Ci pasuje - niektórzy wolą rano, inni są bardziej produktywni po południu 😊',
+        'Jakie narzędzia używacie?': 'Mamy całkiem nowoczesny setup! React + TypeScript do frontu, Node.js na backendzie, PostgreSQL do danych. Wszystko w Dockerze, deployujemy przez Kubernetes. Na codzień to Slack do gadania (dużo gifów! 😄), Jira do zadań (ale nie jesteśmy bardzo sztywni z tym), Git oczywiście, i VS Code lub co wolisz. Każdy ma swoje preferencje i to okej!',
+        'Jak wygląda proces onboardingu?': 'Relax, nie rzucamy Cię na głęboką wodę! 😊 Pierwsze 2 tygodnie to spokojne zapoznanie się. Dostajesz buddy\'ego z zespołu, który pomoże Ci we wszystkim (i tak, możesz pytać o wszystko, nawet gdzie jest łazienka!). Pierwszy tydzień to głównie setup, poznawanie ludzi i czytanie dokumentacji. Drugi tydzień to pierwsze małe taski, żeby poczuć jak działa kod. Nikt nie oczekuje, że będziesz od razu wszystko wiedzieć - każdy przechodzi przez to samo!',
+        'Jakie są możliwości rozwoju?': 'O, to dobre pytanie! 🚀 Mamy spory budżet na rozwój - konferencje, szkolenia, kursy online (Udemy, Pluralsight itd.). Jeśli widzisz, że coś Cię kręci - tech lead, architektura, może nawet management - gadamy i układamy plan. Co kwartał mamy 1-on-1 gdzie omawiamy Twoje cele. Fajne jest też to, że możesz robić prezentacje dla zespołu o rzeczach, których się nauczysz - dzielenie się wiedzą jest u nas ważne!',
+        'Jaka jest kultura firmy?': 'Hmm, jak to opisać... Jesteśmy bardzo luźni, ale profesjonalni jednocześnie 😊 Nie ma tu korporacyjnych formalności - mówisz CTO po imieniu, możesz challenge\'ować decyzje (konstruktywnie ofc), i nikt nie patrzy na zegarek jak wychodzisz o 15 na rower. Ważne żeby robota była zrobiona i zespół mógł na Tobie polegać. Mamy piątkowe beer & learn (prezentacje + piwo, opcjonalne obie rzeczy 😄), czasem gramy w gry po pracy. Work-life balance to nie jest tu puste hasło - jak mówisz że jesteś zmęczony, to nikt nie każe Ci zostać dłużej.'
       };
 
-      const answer = Object.entries(answers).find(([key]) => 
+      const answer = Object.entries(answers).find(([key]) =>
         data.question.toLowerCase().includes(key.toLowerCase())
-      )?.[1] || 'Dziękujemy za pytanie! To świetne pytanie. Chętnie omówimy to bardziej szczegółowo podczas rozmowy. Możesz również skontaktować się z naszym zespołem HR, który chętnie odpowie na wszystkie Twoje pytania.';
+      )?.[1] || 'Świetne pytanie! 🤔 Szczerze, nie mam teraz gotowej odpowiedzi na to konkretne pytanie, ale bardzo chętnie sprawdzę to dla Ciebie. Możesz też bezpośrednio zapytać o to podczas dalszej rozmowy z zespołem - oni będą mogli odpowiedzieć Ci bardziej szczegółowo. Zapisałem Twoje pytanie, żeby zespół je zobaczył!';
 
       resolve({
         success: true,
