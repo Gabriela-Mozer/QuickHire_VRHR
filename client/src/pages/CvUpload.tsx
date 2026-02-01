@@ -108,8 +108,10 @@ export function CvUpload() {
         description: 'Redirecting to match analysis...'
       });
 
-      // Store application data in session storage for next page
+      // Store application data and CV text in session storage for next page
       sessionStorage.setItem('applicationData', JSON.stringify(response));
+      sessionStorage.setItem('cvText', activeTab === 'file' ? 'CV from file: ' + cvFile?.name : cvText);
+      console.log('CV text stored in session storage for recommendations');
       navigate(`/job/${jobId}/match`);
     } catch (error) {
       toast({

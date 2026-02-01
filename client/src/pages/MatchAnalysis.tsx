@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, AlertCircle, Sparkles, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/useToast';
+import { getRecommendedJobs } from '@/api/jobs';
+import { JobRecommendations } from '@/components/JobRecommendations';
 
 interface MatchData {
   applicationId: string;
@@ -21,6 +23,19 @@ export function MatchAnalysis() {
   const { toast } = useToast();
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showRecommendations, setShowRecommendations] = useState(false);
+  const [recommendations, setRecommendations] = useState<Array<{
+    _id: string;
+    title: string;
+    company: string;
+    location: string;
+    description: string;
+    seniority: string;
+    skills: string[];
+    matchPercentage: number;
+    reason: string;
+  }>>([]);
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
 
   useEffect(() => {
     const data = sessionStorage.getItem('applicationData');
@@ -58,6 +73,36 @@ export function MatchAnalysis() {
     if (percentage >= 80) return 'bg-green-600';
     if (percentage >= 50) return 'bg-yellow-600';
     return 'bg-red-600';
+  };
+
+  const handleFindAlternatives = async () => {
+    console.log('Finding alternative job recommendations');
+    setLoadingRecommendations(true);
+
+    try {
+      // Get CV text from session storage
+      const applicationData = sessionStorage.getItem('applicationData');
+      const cvText = sessionStorage.getItem('cvText') || '';
+
+      const response = await getRecommendedJobs({
+        cvText: cvText,
+        currentJobId: jobId || '',
+        matchPercentage: matchData?.matchPercentage || 0
+      });
+
+      console.log(`Found ${response.recommendations.length} job recommendations`);
+      setRecommendations(response.recommendations);
+      setShowRecommendations(true);
+    } catch (error) {
+      console.error('Error fetching job recommendations:', error);
+      toast({
+        title: 'Ups!',
+        description: 'Nie udało się znaleźć innych ofert. Spróbuj ponownie.',
+        variant: 'destructive'
+      });
+    } finally {
+      setLoadingRecommendations(false);
+    }
   };
 
   if (loading || !matchData) {
@@ -203,24 +248,83 @@ export function MatchAnalysis() {
         </Card>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-3">
+      {/* Decision Card */}
+      <Card className="backdrop-blur-sm bg-gradient-to-br from-white to-purple-50 dark:from-slate-900 dark:to-purple-950/30 border-purple-200/50 dark:border-purple-800/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-purple-600" />
+            Co dalej?
+          </CardTitle>
+          <CardDescription>
+            Zdecyduj, czy chcesz kontynuować proces rekrutacji na to stanowisko
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Na podstawie analizy Twojego CV widzę, że masz {matchData.matchPercentage}% dopasowania do tej roli.
+            {matchData.matchPercentage >= 80 ? ' To świetny wynik! 🎉' : matchData.matchPercentage >= 60 ? ' To solidny wynik! 👍' : ' Są pewne braki, ale możemy o tym pogadać.'}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            <strong>Chcesz kontynuować?</strong> Przejdziemy do rozmowy z AI, gdzie omówimy Twoje doświadczenie.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            <strong>Wolisz zobaczyć inne oferty?</strong> Mogę znaleźć dla Ciebie alternatywne stanowiska, które mogą lepiej pasować do Twojego profilu! 😊
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
+            <Button
+              onClick={handleFindAlternatives}
+              disabled={loadingRecommendations}
+              variant="outline"
+              className="h-auto py-4 flex flex-col items-start gap-2 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-blue-600" />
+                <span className="font-semibold">Pokaż mi inne oferty</span>
+              </div>
+              <span className="text-xs text-muted-foreground text-left">
+                {loadingRecommendations ? 'Szukam dla Ciebie...' : 'Znajdź lepsze dopasowanie'}
+              </span>
+            </Button>
+
+            <Button
+              onClick={() => {
+                console.log('Candidate decided to continue with interview');
+                sessionStorage.setItem('applicationId', matchData.applicationId);
+                navigate(`/job/${jobId}/interview`);
+              }}
+              className="h-auto py-4 flex flex-col items-start gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5" />
+                <span className="font-semibold">Tak, chcę kontynuować!</span>
+              </div>
+              <span className="text-xs opacity-90 text-left">
+                Przejdź do rozmowy rekrutacyjnej
+              </span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Alternative: Back to offers button */}
+      <div className="flex justify-center">
         <Button
-          variant="outline"
+          variant="ghost"
           onClick={() => navigate('/')}
+          className="gap-2"
         >
-          Wróć do ofert
-        </Button>
-        <Button
-          onClick={() => {
-            sessionStorage.setItem('applicationId', matchData.applicationId);
-            navigate(`/job/${jobId}/interview`);
-          }}
-          className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-        >
-          Przejdź do rozmowy
+          <ArrowLeft className="h-4 w-4" />
+          Wróć do wszystkich ofert
         </Button>
       </div>
+
+      {/* Job Recommendations Modal */}
+      <JobRecommendations
+        recommendations={recommendations}
+        isOpen={showRecommendations}
+        onClose={() => setShowRecommendations(false)}
+      />
     </div>
   );
 }

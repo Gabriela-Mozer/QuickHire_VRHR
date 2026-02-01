@@ -348,3 +348,92 @@ export const getJobById = (jobId: string) => {
   //   throw new Error(error?.response?.data?.message || error.message);
   // }
 };
+
+// Description: Get recommended jobs based on CV and current job
+// Endpoint: POST /api/jobs/recommendations
+// Request: { cvText: string, currentJobId: string, matchPercentage: number }
+// Response: { recommendations: Array<{ _id: string, title: string, company: string, location: string, description: string, seniority: string, skills: string[], matchPercentage: number, reason: string }> }
+export const getRecommendedJobs = (data: { cvText: string; currentJobId: string; matchPercentage: number }) => {
+  // Mocking the response - simulating job recommendations based on CV
+  const cvText = data.cvText.toLowerCase();
+  const hasReact = cvText.includes('react') || cvText.includes('frontend');
+  const hasNode = cvText.includes('node') || cvText.includes('backend');
+  const hasPython = cvText.includes('python');
+  const hasDevOps = cvText.includes('devops') || cvText.includes('docker') || cvText.includes('kubernetes');
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const allRecommendations = [
+        {
+          _id: '2',
+          title: 'Full Stack Developer',
+          company: 'StartupXYZ',
+          location: 'Remote',
+          description: 'Buduj skalowalne aplikacje webowe z wykorzystaniem nowoczesnych technologii.',
+          seniority: 'Mid',
+          skills: ['React', 'Node.js', 'MongoDB', 'AWS'],
+          matchPercentage: hasReact && hasNode ? 88 : 75,
+          reason: hasReact && hasNode ? 'Twoje doświadczenie z React i Node.js idealnie pasuje do tego full-stack stanowiska!' : 'Dobre dopasowanie do Twoich umiejętności'
+        },
+        {
+          _id: '3',
+          title: 'Junior Frontend Developer',
+          company: 'WebStudio',
+          location: 'Krakow, Poland',
+          description: 'Rozpocznij swoją karierę w przyjaznym środowisku z mentoringiem.',
+          seniority: 'Junior',
+          skills: ['HTML', 'CSS', 'JavaScript', 'React'],
+          matchPercentage: hasReact ? 85 : 70,
+          reason: hasReact ? 'Świetna opcja jeśli szukasz bardziej supportive środowiska z mentoringiem!' : 'Dobre miejsce na start lub zmianę ścieżki'
+        },
+        {
+          _id: '5',
+          title: 'Backend Developer',
+          company: 'DataFlow',
+          location: 'Wroclaw, Poland',
+          description: 'Buduj solidne systemy backendowe do przetwarzania danych.',
+          seniority: 'Mid',
+          skills: ['Python', 'PostgreSQL', 'Redis', 'Docker'],
+          matchPercentage: hasPython || hasNode ? 82 : 68,
+          reason: hasPython ? 'Widzę, że Python jest w Twoim CV - to może być ciekawe!' : hasNode ? 'Twoje doświadczenie backendowe dobrze się tu sprawdzi' : 'Możliwość nauki nowych technologii backendowych'
+        },
+        {
+          _id: '4',
+          title: 'DevOps Engineer',
+          company: 'CloudSystems',
+          location: 'Remote',
+          description: 'Zarządzaj i optymalizuj infrastrukturę chmurową.',
+          seniority: 'Senior',
+          skills: ['Docker', 'Kubernetes', 'AWS', 'CI/CD'],
+          matchPercentage: hasDevOps ? 80 : 65,
+          reason: hasDevOps ? 'Twoje DevOps skills mogą być tutaj świetnie wykorzystane!' : 'Dobra ścieżka jeśli chcesz rozwinąć się w kierunku infrastruktury'
+        },
+        {
+          _id: '6',
+          title: 'UI/UX Designer',
+          company: 'DesignHub',
+          location: 'Remote',
+          description: 'Twórz piękne i intuicyjne interfejsy użytkownika.',
+          seniority: 'Mid',
+          skills: ['Figma', 'UI Design', 'UX Research', 'Prototyping'],
+          matchPercentage: hasReact ? 70 : 60,
+          reason: hasReact ? 'Jeśli interesuje Cię bardziej strona wizualna - masz już tech background!' : 'Ciekawa ścieżka jeśli myślisz o zmianie kierunku'
+        }
+      ];
+
+      // Filter out current job and sort by match percentage
+      const recommendations = allRecommendations
+        .filter(job => job._id !== data.currentJobId)
+        .sort((a, b) => b.matchPercentage - a.matchPercentage)
+        .slice(0, 4); // Return top 4 recommendations
+
+      resolve({ recommendations });
+    }, 1000);
+  });
+  // Uncomment the below lines to make an actual API call
+  // try {
+  //   return await api.post('/api/jobs/recommendations', data);
+  // } catch (error) {
+  //   throw new Error(error?.response?.data?.message || error.message);
+  // }
+};
