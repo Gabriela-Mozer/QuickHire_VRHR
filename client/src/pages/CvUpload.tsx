@@ -54,7 +54,7 @@ export function CvUpload() {
     e.stopPropagation();
     const file = e.dataTransfer.files?.[0];
     if (file) {
-      handleFileChange({ target: { files: e.dataTransfer.files } } as any);
+      handleFileChange({ target: { files: e.dataTransfer.files } } as React.ChangeEvent<HTMLInputElement>);
     }
   };
 
