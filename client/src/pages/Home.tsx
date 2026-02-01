@@ -67,8 +67,9 @@ export function Home() {
     setFilteredJobs(filtered);
   }, [searchTerm, seniorityFilter, jobs]);
 
-  const handleApply = (jobId: string) => {
-    navigate(`/job/${jobId}/apply`);
+  const handleViewJob = (jobId: string) => {
+    console.log(`Navigating to job details for jobId: ${jobId}`);
+    navigate(`/job/${jobId}`);
   };
 
   const getSeniorityColor = (seniority: string) => {
@@ -199,12 +200,11 @@ export function Home() {
                 </div>
 
                 <Button
-                  onClick={() => handleApply(job._id)}
+                  onClick={() => handleViewJob(job._id)}
                   className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 gap-2"
-                  disabled={job.status === 'applied'}
                 >
                   <Zap className="h-4 w-4" />
-                  {job.status === 'applied' ? 'Already Applied' : 'Apply Now'}
+                  {job.status === 'applied' ? 'Zobacz szczegóły' : 'Zobacz ofertę'}
                 </Button>
               </CardContent>
             </Card>

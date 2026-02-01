@@ -8,6 +8,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute"
 import { Layout } from "./components/Layout"
 import { BlankPage } from "./pages/BlankPage"
 import { Home } from "./pages/Home"
+import { JobDetails } from "./pages/JobDetails"
 import { Applications } from "./pages/Applications"
 import { CvUpload } from "./pages/CvUpload"
 import { MatchAnalysis } from "./pages/MatchAnalysis"
@@ -25,6 +26,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<ProtectedRoute> <Layout><Home /></Layout> </ProtectedRoute>} />
           <Route path="/applications" element={<ProtectedRoute> <Layout><Applications /></Layout> </ProtectedRoute>} />
+          <Route path="/job/:jobId" element={<ProtectedRoute> <Layout><JobDetails /></Layout> </ProtectedRoute>} />
           <Route path="/job/:jobId/apply" element={<ProtectedRoute> <Layout><CvUpload /></Layout> </ProtectedRoute>} />
           <Route path="/job/:jobId/match" element={<ProtectedRoute> <Layout><MatchAnalysis /></Layout> </ProtectedRoute>} />
           <Route path="/job/:jobId/interview" element={<ProtectedRoute> <Layout><Interview /></Layout> </ProtectedRoute>} />
