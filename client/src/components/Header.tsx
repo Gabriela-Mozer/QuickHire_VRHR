@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react"
+import { LogOut, Rocket } from "lucide-react"
 import { Button } from "./ui/button"
 import { ThemeToggle } from "./ui/theme-toggle"
 
@@ -16,7 +16,15 @@ export function Header() {
   return (
     <header className="fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="flex h-16 items-center justify-between px-6">
-        <div className="text-xl font-bold" onClick={() => navigate("/")}>Home</div>
+        <div 
+          className="flex items-center gap-2 text-xl font-bold cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => navigate("/")}
+        >
+          <Rocket className="h-6 w-6 text-blue-600" />
+          <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            RVR
+          </span>
+        </div>
         <div className="flex items-center gap-4">
           <ThemeToggle />
           <Button variant="ghost" size="icon" onClick={handleLogout}>
